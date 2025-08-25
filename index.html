@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Anniversary</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* --road-length: 5000px;  (ya no se usa) */
+        --car-color: #ff4d4d;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: "Open Sans", sans-serif;
+        background: linear-gradient(to bottom, #ff6b6b, #c73866);
+        color: #333;
+        text-align: center;
+        overflow-x: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        padding: 0 20px;
+      }
+      .main-heading {
+        font-family: "Pacifico", cursive;
+        font-size: 2.5rem;
+        color: #fff;
+        margin-bottom: 20px;
+      }
+      .center-love {
+        font-size: 2rem;
+        color: #fff;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .road-container {
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 100px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+      .road-container::-webkit-scrollbar {
+        height: 8px;
+      }
+      .road-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .road-container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+      }
+
+      .track {
+        position: relative;
+        height: 180px;
+        margin: 0 auto;
+        /* JS ajusta el width exacto */
+        width: auto;
+      }
+
+      .road {
+        position: absolute;
+        top: 55%;
+        left: 0;
+        transform: translateY(-50%);
+        height: 50px;
+        background: linear-gradient(#5c5c5c, #4b4b4b);
+        box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.25),
+          inset 0 -8px 16px rgba(0, 0, 0, 0.2);
+        z-index: -1;
+        width: 100%; /* sigue el ancho de .track */
+      }
+      .road::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: repeating-linear-gradient(
+          to right,
+          #fff 0,
+          #fff 20px,
+          transparent 20px,
+          transparent 40px
+        );
+        transform: translateY(-50%);
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+      }
+
+      .gallery {
+        display: inline-flex;
+        align-items: center;
+        gap: 50px;
+        padding: 40px;
+        position: relative;
+        top: -10px;
+        width: auto; /* contenido define el ancho total */
+      }
+
+      /* car buttons with gentle idle bounce */
+      @keyframes idle-bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-2px);
+        }
+      }
+      .car-btn {
+        position: relative;
+        width: 110px;
+        height: 58px;
+        border: none;
+        cursor: pointer;
+        scroll-snap-align: start;
+        background: var(--car-color);
+        color: #fff;
+        font-weight: 700;
+        border-radius: 12px 12px 14px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+        transition: transform 0.2s, box-shadow 0.2s;
+        animation: idle-bounce 3s ease-in-out infinite;
+        animation-play-state: paused;
+      }
+      .car-btn:hover {
+        animation-play-state: running;
+        transform: translateY(-3px);
+        box-shadow: 0 0 12px rgba(255, 200, 200, 0.9),
+          0 0 25px rgba(255, 150, 150, 0.6);
+      }
+      .car-btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+      .car-btn::before,
+      .car-btn::after {
+        content: "";
+        position: absolute;
+        bottom: -11px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          #bbb 0 40%,
+          #222 41% 100%
+        );
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+      }
+      .car-btn::before {
+        left: 14px;
+      }
+      .car-btn::after {
+        right: 14px;
+      }
+      .car-btn span {
+        position: absolute;
+        top: 8px;
+        left: 55%;
+        width: 34px;
+        height: 10px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.35);
+        transform: skewX(-18deg);
+      }
+
+      .road-note {
+        display: inline-block;
+        font-family: "Pacifico", cursive;
+        font-size: 1.6rem;
+        color: lightblue;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        transform: rotate(-45deg);
+        position: relative;
+        top: 10px;
+        left: -10px;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* popup + animation */
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        backdrop-filter: blur(3px);
+        transition: opacity 0.25s;
+        opacity: 0;
+      }
+      .overlay.open {
+        opacity: 1;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -46%) scale(0.98);
+        opacity: 0;
+        transition: opacity 0.25s, transform 0.25s;
+        background: #fff;
+        padding: 18px 16px;
+        border-radius: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        max-width: 92vw;
+        width: min(720px, 92vw);
+        max-height: 90vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .popup.open {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+
+      .popup-header {
+        font-weight: 700;
+        margin: 0 0 8px;
+      }
+      .slider {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .slide-img {
+        max-width: 100%;
+        max-height: 42vh;
+        border-radius: 10px;
+        display: block;
+        margin: 0 auto;
+        height: auto;
+        content-visibility: auto;
+        transition: opacity 0.35s ease, transform 0.35s ease;
+        will-change: opacity, transform;
+      }
+      .slide-img.is-out {
+        opacity: 0;
+        transform: scale(0.985);
+      }
+
+      .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 22px;
+        line-height: 1;
+        border-radius: 10px;
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+      .nav-btn:hover {
+        background: rgba(0, 0, 0, 0.65);
+      }
+      .nav-prev {
+        left: 6px;
+      }
+      .nav-next {
+        right: 6px;
+      }
+      .counter {
+        position: absolute;
+        bottom: 6px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 10px;
+      }
+
+      /* caption pill */
+      .caption {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 10px 0 8px;
+        padding: 6px 10px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #0f172a;
+        background: rgba(125, 211, 252, 0.18);
+        border: 1px solid rgba(14, 165, 233, 0.25);
+        border-radius: 999px;
+        text-align: left;
+      }
+      .caption::before {
+        content: "📷";
+        font-size: 1rem;
+        line-height: 1;
+      }
+
+      /* message card */
+      .popup-text {
+        position: relative;
+        text-align: left;
+        margin: 12px 2px 0 2px;
+        padding: 14px 14px 12px;
+        font-size: 1rem;
+        line-height: 1.55;
+        white-space: pre-line;
+        color: #1f2937;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        border-top: 2px dashed rgba(99, 102, 241, 0.25);
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: radial-gradient(
+            200% 120% at 0% 0%,
+            rgba(99, 102, 241, 0.05),
+            transparent 40%
+          )
+          #fff;
+      }
+      .popup-text.has-label::before {
+        content: "Mensaje del Mes";
+        display: inline-block;
+        width: fit-content;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #060708;
+        background: #f3f4f6;
+        border-radius: 999px;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border-radius: 10px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+
+      .background-images {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bg-photo {
+        position: absolute;
+        width: 150px;
+        opacity: 0.15;
+        transform: rotate(-5deg);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      /* ---- Aesthetic extras for Final button & message ---- */
+      .final-btn {
+        background: linear-gradient(135deg, #ff7eb3, #ff758c, #ff4d4d);
+        box-shadow: 0 0 16px rgba(255, 110, 140, 0.7),
+          0 6px 14px rgba(0, 0, 0, 0.35);
+      }
+      .popup.final-mode .slider {
+        display: none;
+      }
+      #popup-text.final-message {
+        font-size: 1.2rem;
+        text-align: center;
+        line-height: 1.8;
+        background: radial-gradient(circle at top, #ffe4ec, #fff);
+        border: none;
+        box-shadow: 0 0 15px rgba(255, 100, 130, 0.25);
+        border-top: 0;
+      }
+      .popup.final-mode .popup-header {
+        font-family: "Pacifico", cursive;
+        font-size: 1.6rem;
+      }
+      .popup.final-mode::after {
+        content: "❤ ❤ ❤ ❤ ❤";
+        position: absolute;
+        left: 50%;
+        top: -6px;
+        transform: translateX(-50%);
+        font-size: 12px;
+        opacity: 0.4;
+        letter-spacing: 8px;
+      }
+
+      /* ===== Finish line (META) ===== */
+      .finish-line {
+        position: relative;
+        width: 160px;
+        height: 120px;
+        display: inline-block; /* se coloca al final de la fila */
+        margin-left: 8px;
+      }
+      .fl-pole {
+        position: absolute;
+        bottom: 25px; /* justo sobre la carretera (~50px alto) */
+        width: 6px;
+        height: 90px;
+        background: linear-gradient(#7f7f7f, #5e5e5e);
+        border-radius: 6px;
+        box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5),
+          0 2px 4px rgba(0, 0, 0, 0.25);
+      }
+      .fl-left {
+        left: 12px;
+      }
+      .fl-right {
+        right: 12px;
+      }
+      .fl-banner {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 110px;
+        height: 24px;
+        border-radius: 6px;
+        background: repeating-linear-gradient(
+          90deg,
+          #fff 0 14px,
+          #000 14px 28px
+        );
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fl-banner::after {
+        content: "AÑO 1!!!!";
+        font-family: "Helvetica", sans-serif;
+        font-size: 20px;
+        color: #e95353;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        background: rgba(114, 80, 80, 0.493);
+        padding: 2px 8px;
+        border-radius: 8px;
+      }
+      /* ===== Corazones flotando en el popup final ===== */
+      .hearts-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0; /* detrás del contenido */
+      }
+      .float-heart {
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: var(--fs, 20px);
+        color: var(--col, #ff6b8b);
+        opacity: 0.95;
+        animation: rise var(--dur, 6s) linear forwards;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      @keyframes rise {
+        0% {
+          transform: translate(-50%, 0) rotate(0deg) scale(1);
+          opacity: 0.95;
+        }
+        50% {
+          opacity: 0.85;
+        }
+        100% {
+          transform: translate(calc(-50% + var(--dx, 0px)), -120%) rotate(12deg)
+            scale(1.4);
+          opacity: 0;
+        }
+      }
+      .popup.final-mode .popup-header,
+      .popup.final-mode .popup-text,
+      .popup.final-mode .caption,
+      .popup.final-mode .counter,
+      .popup.final-mode .close-btn {
+        position: relative;
+        z-index: 1; /* sobre los corazones */
+      }
+
+      /* utility */
+      .hidden {
+        display: none !important;
+      }
+      .slider {
+        touch-action: pan-y;
+        user-select: none;
+      }
+
+      /* prefers-reduced-motion */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <audio id="bg-music" src="RecordingsOfAudio/Ordinary.mp4" loop></audio>
+    <div class="background-images">
+      <img
+        loading="lazy"
+        src="BackgroundPictures/BackgorundPhoto1.jpeg"
+        class="bg-photo"
+        style="top: 10%; left: 5%"
+      />
+      <img
+        loading="lazy"
+        src="BackgroundPictures/BackgorundPhoto2.jpeg"
+        class="bg-photo"
+        style="top: 60%; left: 80%"
+      />
+      <img
+        loading="lazy"
+        src="BackgroundPictures/BackgorundPhoto3.jpeg"
+        class="bg-photo"
+        style="top: 30%; left: 42%"
+      />
+      <img
+        loading="lazy"
+        src="BackgroundPictures/BackgorundPhoto4.jpeg"
+        class="bg-photo"
+        style="top: 50%; left: 10%"
+      />
+      <img
+        loading="lazy"
+        src="BackgroundPictures/BackgroundPhoto5.jpeg"
+        class="bg-photo"
+        style="top: 5%; left: 70%"
+      />
+    </div>
+
+    <header>
+      <div class="main-heading">Feliz Aniversario de un año mi amor</div>
+      <div class="center-love">Te Amo ❤️</div>
+    </header>
+
+    <div class="road-container">
+      <div class="track">
+        <div class="road"></div>
+        <div class="gallery">
+          <!-- MEMORIAS: single-photo mode -->
+          <button class="car-btn" onclick="playVideoMemory2()">
+            Memoria 1<span></span>
+          </button>
+          <button
+            class="car-btn"
+            onclick="showSingle('ButtonPhotos/Foto1.jpeg','Estas es de las primeras fotos que tengo de tí amor, y quien pensaría que así de rapido ya paso un año. ❤️')"
+          >
+            Memoria 2<span></span>
+          </button>
+          <button class="car-btn" onclick="playVideoMemory3()">
+            Memoria 3<span></span>
+          </button>
+          <button
+            class="car-btn"
+            onclick="showSingle('ButtonPhotos/Foto4.jpeg','Como olvidarme del dia que conoci a Miguel en la bolera (y a su querida madre). Pero mas que eso, aqui fue que senti que conecte con tu familia mas.')"
+          >
+            Memoria 4<span></span>
+          </button>
+
+          <span class="road-note">NOVIOSS!!!</span>
+
+          <!-- MESES: slider mode -->
+          <button class="car-btn" onclick="openMonth(0)">
+            Mes 1<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(1)">
+            Mes 2<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(2)">
+            Mes 3<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(3)">
+            Mes 4<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(4)">
+            Mes 5<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(5)">
+            Mes 6<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(6)">
+            Mes 7<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(7)">
+            Mes 8<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(8)">
+            Mes 9<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(9)">
+            Mes 10<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(10)">
+            Mes 11<span></span>
+          </button>
+          <button class="car-btn" onclick="openMonth(11)">
+            Mes 12<span></span>
+          </button>
+
+          <!-- FINAL BUTTON -->
+          <button class="car-btn final-btn" onclick="openFinalMessage()">
+            Final ❤<span></span>
+          </button>
+
+          <!-- FINISH LINE / META -->
+          <div class="finish-line" aria-hidden="true">
+            <div class="fl-pole fl-left"></div>
+            <div class="fl-pole fl-right"></div>
+            <div class="fl-banner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- audio -->
+    <video
+      id="audio-only1"
+      src="RecordingsOfAudio/Devorame Otra Vez.mp4"
+      type="video/mp4"
+      style="display: none"
+    ></video>
+    <video
+      id="audio-only2"
+      src="RecordingsOfAudio/Solia.mp4"
+      type="video/mp4"
+      style="display: none"
+    ></video>
+
+    <!-- overlay + popup -->
+    <div class="overlay" id="overlay" onclick="hidePopup()"></div>
+    <div class="popup" id="popup" aria-modal="true" role="dialog">
+      <button id="closeBtn" class="close-btn" aria-label="Cerrar">✕</button>
+
+      <!-- capa de corazones para el final -->
+      <div id="hearts" class="hearts-layer" aria-hidden="true"></div>
+
+      <h3 class="popup-header" id="popup-title"></h3>
+
+      <div class="slider">
+        <button
+          id="prevBtn"
+          class="nav-btn nav-prev"
+          onclick="prevPhoto()"
+          aria-label="Foto anterior"
+        >
+          ‹
+        </button>
+        <img id="popup-img" class="slide-img" src="" alt="" />
+        <div class="counter" id="popup-count"></div>
+        <button
+          id="nextBtn"
+          class="nav-btn nav-next"
+          onclick="nextPhoto()"
+          aria-label="Foto siguiente"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="caption" id="popup-caption"></div>
+      <p class="popup-text" id="popup-text"></p>
+    </div>
+
+    <script>
+      /* ------- DATA: photos + text per month ------- */
+      const months = [
+        {
+          title: "Septiembre",
+          text: "Nuestro primer mes como novios fue uno especial para mí, fue cuando conociste a mi familia, cuando fuimos a Ponce. También la primera vez que me dijiste te amo (fue sin querer, según tú). Y quiero que sepas que desde que te conocí, supe que eras tú, y supe que tenía que preguntarte para ser novios porque no quería dejarte ir.",
+          photos: [
+            {
+              src: "MonthPictures/Septiembre/PonceSeptiembre.jpeg",
+              cap: "Día de la pregunta preguntativa",
+            },
+            {
+              src: "MonthPictures/Septiembre/TuTeAmo.jpeg",
+              cap: "En ese día me dijiste te amo y te fuiste",
+            },
+            {
+              src: "MonthPictures/Septiembre/PrimerPostFoto.jpeg",
+              cap: "De los primeros post que puse en Instagram de nosotros",
+            },
+          ],
+        },
+        {
+          title: "Octubre",
+          text: "Segundo mes contigo mi amor. En este mes pudimos celebrar tu cumpleaños juntos por primera vez. También fue de las primeras veces que no nos vimos por un largo periodo de tiempo porque había terminado mi trimestre y todo eso. Pero como quiera nos vestimos los dos bien locos en Halloween y seguíamos teniendo esa comunicación. Aunque no te viera por mucho tiempo, te seguía amando y extrañando como siempre.",
+          photos: [
+            {
+              src: "MonthPictures/Octubre/CumpleanosIsabel.jpeg",
+              cap: "Después que te cantamos",
+            },
+            {
+              src: "MonthPictures/Octubre/HalloweenIsabel.jpeg",
+              cap: "Esta es de mis fotos favoritas de ustedes.",
+            },
+            {
+              src: "MonthPictures/Octubre/HalloweenJonathan.jpeg",
+              cap: "La loquera que me dio a mí de vestirme de pollo (fue idea tuya también que me lo pusiera)",
+            },
+          ],
+        },
+        {
+          title: "Noviembre",
+          text: "Tercer mes contigo mi vida. Cómo olvidarme cuando fuimos a ver Monster Jam juntos y verlo en persona y contigo fue otra cosa. También cuando conocí a la jodía Julie slm, a mala hora, ya me enojé. Bueno, lo importante, seguían pasando los meses y seguía pensando igual: eres tú, nadie más.",
+          photos: [
+            {
+              src: "MonthPictures/Noviembre/MonsterJamFoto.jpeg",
+              cap: "Mira qué locos nos vemos",
+            },
+            {
+              src: "MonthPictures/Noviembre/EnSagrado.jpeg",
+              cap: "Me acuerdo que aquí en una no parabas de reírte jajaja",
+            },
+            {
+              src: "MonthPictures/Noviembre/FuturaEsposa.jpeg",
+              cap: "Cómo olvidarme de esta foto. No sabes lo mucho que me emocioné al verte así, me imaginé todo mi futuro con solo una foto.",
+            },
+          ],
+        },
+        {
+          title: "Diciembre",
+          text: "Qué mes especial fue diciembre. Aunque no estuvimos para Año Nuevo juntos, lo que fue Navidad y los demás días que estuvimos juntos, son días que nunca olvidaré. Cuando intercambiamos regalos, cuando salimos a comer en el brunch ese que no recuerdo el nombre (perdón no lo quiero buscar). Pero todas esas salidas, fue uno de los meses que mejor hemos tenido. Amarte en nuestra primera Navidad nunca se me olvidará.",
+          photos: [
+            {
+              src: "MonthPictures/Diciembre/Diciembre2.jpeg",
+              cap: "Nuestra foto favorita, más hermosa no te puedes ver mi amor. Perfecta",
+            },
+            {
+              src: "MonthPictures/Diciembre/Diciembre3.jpeg",
+              cap: "Esta foto me recuerda lo feliz que soy contigo, literalmente",
+            },
+            {
+              src: "MonthPictures/Diciembre/Diciembre1.jpeg",
+              cap: "Cómo olvidar cuando montamos los inflables jajajajaja",
+            },
+          ],
+        },
+        {
+          title: "Enero",
+          text: "Qué no hicimos en enero. Tuve mi primer cumpleaños con el amor de mi vida (literalmente). Fui a las fiestas de la calle San Sebastián por primera vez, y con quién más que contigo. Conociste a mis amigos por primera vez. Tuvimos nuestros primeros Reyes Magos juntos, donde te regalé la famosa gorra. Ahora escribiendo esto pasaron muchas cosas por primera vez en enero jajajaja. Pero algo se quedaba presente, lo mucho que te amo y lo muy enamorado que estaba (y estoy) de ti. Este mes fue especial, pero lo mejor de todo es que te tuve a mi lado.",
+          photos: [
+            {
+              src: "MonthPictures/Enero/Enero1.jpeg",
+              cap: "La mejor gorra en la existencia y nadie me puede decir lo contrario",
+            },
+            {
+              src: "MonthPictures/Enero/Enero2.jpeg",
+              cap: "Ese día nunca se me olvidará, seguía dándome la razón. No quería a otra persona en mi vida, si te tengo a ti",
+            },
+            {
+              src: "MonthPictures/Enero/Enero3.jpeg",
+              cap: "Puse esta foto porque es de mis favoritas. Pienso que nos vemos como nosotros realmente somos. Llegamos y nos tiramos en el mueble jajaja. Te amo",
+            },
+            {
+              src: "MonthPictures/Enero/Enero4.jpeg",
+              cap: "El día de mi cumpleaños, donde conociste a medio planeta. Pero quiero que sepas que aspiro que tengamos muchos más juntos",
+            },
+          ],
+        },
+        {
+          title: "Febrero",
+          text: "En este mes pasó lo que en algún punto iba a pasar. Tuvimos nuestra primera pelea fuerte entre los dos. Pero a pesar de esa pelea, mira estas fotos y recuerdos que tenemos de este mes. Sin importar que tengamos desacuerdos o peleemos, lo resolvemos y nos quedamos con esos recuerdos buenos como los que tuvimos en febrero. Te amaré siempre, por más que peleemos, siempre trataré de arreglarlo porque no quiero perderte. Te amo.",
+          photos: [
+            {
+              src: "MonthPictures/Febrero/Febrero1.jpg",
+              cap: "Cuando fuimos a celebrar nuestros 6 meses en The Mall of San Juan jajaja",
+            },
+            {
+              src: "MonthPictures/Febrero/Febrero2.jpg",
+              cap: "Cómo olvidarme que nos llamaron en Viejo San Juan para que les compráramos leche este día que estábamos celebrando los 6 meses y nos tuvimos que ir😭",
+            },
+            {
+              src: "MonthPictures/Febrero/Febrero3.jpg",
+              cap: "14 de febrero, en espera que nos sentaran en Olive Garden. Qué rico",
+            },
+          ],
+        },
+        {
+          title: "Marzo",
+          text: "Otro mes más contigo. Este mes fue el primer cumpleaños que tuve con tu mamá y que le llevé flores al trabajo jajaja. Fueron momentos especiales. Pero más que eso, eran momentos que me hacían dar cuenta que en realidad siempre serás tú y nadie más. Y sigo pensando igual, no quiero otra persona en mi vida, solo tú mi amor.",
+          photos: [
+            {
+              src: "MonthPictures/Marzo/Marzo1.jpg",
+              cap: "Cuando fuimos a The Bunker con Julie y Kiona y les gané (como siempre).",
+            },
+            {
+              src: "MonthPictures/Marzo/Marzo2.jpg",
+              cap: "Una foto sin filtro de nosotros jajaja",
+            },
+            {
+              src: "MonthPictures/Marzo/Marzo3.jpg",
+              cap: "De mis fotos favoritas, porque se ve lo locos que somos en una foto",
+            },
+          ],
+        },
+        {
+          title: "Abril",
+          text: "Qué mucho te amo mi amor. En abril logramos salir, ir a tu universidad a joder y mucho más. Este mes estabas trabajando con el documental y no sabes lo orgulloso que estoy de lo que lograste con esta gente. Pero sobre todo ese esfuerzo que le comprometiste a este proyecto que salió tan bien, y que fueras parte de eso me hace muy orgulloso de ti mi amor. Te amo mi vida hermosa, sigue haciendo las cosas que te gustan.",
+          photos: [
+            {
+              src: "MonthPictures/Abril/Abril1.jpg",
+              cap: "Nosotros dos locos como siempre",
+            },
+            {
+              src: "MonthPictures/Abril/Abril2.jpg",
+              cap: "Cuando estábamos en la uni grabando la música del documental",
+            },
+            {
+              src: "MonthPictures/Abril/Abril3.jpg",
+              cap: "Otra vez en The Bunker pero esta vez sin la jodiosa Julie",
+            },
+          ],
+        },
+        {
+          title: "Mayo",
+          text: "Ya en mayo estábamos preparándonos para el viaje de julio. Pero no tan solo eso. Este mes fue que me llamaron de que me aceptaron en el internado, y lo mejor de todo fue que estaba contigo en ese momento. Soy bendecido de tener una persona como tú a mi lado amor, porque siempre me apoyas y estás conmigo en las buenas y en las malas como en ese momento que me aceptaron. Te amo mucho mi amor y gracias por apoyarme en mis cosas siempre no importa qué. Yo nunca te dejaré y vamos a estar juntos luego de viejos cuando los dos seamos personas exitosas. Esto literalmente es el comienzo. Te amo.",
+          photos: [
+            {
+              src: "MonthPictures/Mayo/Mayo1.jpg",
+              cap: "En tu universidad jodiendo mientras trabajas jajajaja",
+            },
+            {
+              src: "MonthPictures/Mayo/Mayo2.jpg",
+              cap: "Aquí salimos con tus papás y fue cuando me llamaron del internado",
+            },
+            {
+              src: "MonthPictures/Mayo/Mayo4.jpg",
+              cap: "Me dio mucha risa esta foto por eso la puse jajajajaja",
+            },
+          ],
+        },
+        {
+          title: "Junio",
+          text: "Cómo olvidarme de este mes. Fue nuestro primer concierto juntos y los dos estábamos trabajando en algo que nos gustaba. Solo puse fotos del concierto porque es lo que tenía (perdón). Junio fue un mes que me aseguró que en nuestra vida futura, cuando ambos estemos trabajando, vamos a ser felices y no va a haber nada que nos separe. Lo único que quiero es que cuando llegue a nuestra casa, lo primero que vea sea tu sonrisa y hermosa cara. Te amo mi amor, y esto solo fue un mes más de nuestra aventura.",
+          photos: [
+            {
+              src: "MonthPictures/Junio/Junio1.jpg",
+              cap: "Foto sexi de los dos",
+            },
+            {
+              src: "MonthPictures/Junio/Junio2.jpg",
+              cap: "Tú maltratándome sin razón",
+            },
+            {
+              src: "MonthPictures/Junio/Junio3.jpg",
+              cap: "Los dos enamorados mutuamente",
+            },
+          ],
+        },
+        {
+          title: "Julio",
+          text: "Wao Julio, no sé ni por dónde empezar. Vamos a empezar porque terminamos nuestros trabajos de verano, así los dos completando las metas que teníamos este verano (generar dinero), y estoy sumamente orgulloso de tu trabajo y lo que lograste ese verano trabajando con tu nena. Aunque no lo creas me hizo ver la grandiosa madre que serás en un futuro. Luego tuvimos nuestro primer viaje juntos, wao quién lo diría que tuviéramos esa oportunidad tan rápido. Pero de verdad no sabes lo mucho que me encantó viajar contigo y con tus papás. Me di cuenta que no me molestaría tener una vida entera contigo. Desde que nos levantábamos hasta que nos acostábamos siempre fue un momento inolvidable para mí. Estoy loco porque viajemos de nuevo tú y yo jajajaja, pero de verdad me alegró mucho ese viaje y me encantaría que se repitiera, siempre y cuando estés tú mi amor, te amo.",
+          photos: [
+            {
+              src: "MonthPictures/Julio/Julio1.jpg",
+              cap: "Mario con su princesa Peach",
+            },
+            {
+              src: "MonthPictures/Julio/Julio2.jpg",
+              cap: "Ese jodío gato que te empezó a ligar",
+            },
+            {
+              src: "MonthPictures/Julio/Julio3.jpg",
+              cap: "Conocimos a Shrek, Burro y Fiona, quién lo diría jajajaja",
+            },
+            {
+              src: "MonthPictures/Julio/Julio4.jpg",
+              cap: "Mira qué hermosa eres mi amor",
+            },
+            {
+              src: "MonthPictures/Julio/Julio5.jpg",
+              cap: "Con nuestras cosa 1 y cosa 2",
+            },
+            {
+              src: "MonthPictures/Julio/Julio6.jpg",
+              cap: "Posando como parejas que llevan años juntos jajajaja",
+            },
+            {
+              src: "MonthPictures/Julio/Julio7.jpg",
+              cap: "Jodiendo a tu papá jajajaja. Qué icónica esta foto de verdad",
+            },
+            {
+              src: "MonthPictures/Julio/Julio8.jpg",
+              cap: "Parece que estamos en un concierto pero me gusta la foto jajaja",
+            },
+            {
+              src: "MonthPictures/Julio/Julio9.jpg",
+              cap: "La pareja del año combinando sus outfits jajajaja",
+            },
+          ],
+        },
+        {
+          title: "Agosto",
+          text: "Y llegó el mes, con este ya son 12. Qué aventura hemos tenido hasta ahora, y lo que falta todavía. Agosto al fin pudimos ir a Bad Bunny y bailar jajaja. Pero más que eso, este mes me hizo pensar en los demás meses que ya hemos vivido. No sabes lo mucho que te amo mi amor y lo agradecido que soy de que estés conmigo y de que tenga una persona que de verdad me ama por quien soy y me apoya en todo lo que hago. Nunca me voy a olvidar de este primer año juntos amor. Te amo, y sé que vendrán muchos meses más.",
+          photos: [
+            {
+              src: "MonthPictures/Agosto/Agosto1.jpg",
+              cap: "La sombra de la mujer más hermosa del mundo con un random al lado",
+            },
+            {
+              src: "MonthPictures/Agosto/Agosto2.jpg",
+              cap: "Literalmente nuestra primera discoteca juntos jajajaja",
+            },
+            {
+              src: "MonthPictures/Agosto/Agosto3.jpg",
+              cap: "Al fin, en nuestro tan esperado concierto",
+            },
+          ],
+        },
+      ];
+
+      /* ------- State & helpers ------- */
+      let curMonth = 0,
+        curPhoto = 0;
+      let popupMode = "month"; // "month" | "memory" | "final"
+      const el = (id) => document.getElementById(id);
+
+      function setMode(mode) {
+        popupMode = mode;
+        const prev = el("prevBtn");
+        const next = el("nextBtn");
+        const count = el("popup-count");
+        const caption = el("popup-caption");
+        const textBox = el("popup-text");
+        const popup = el("popup");
+
+        // reset special classes
+        textBox.classList.remove("final-message");
+        popup.classList.remove("final-mode");
+
+        if (mode === "month") {
+          prev.classList.remove("hidden");
+          next.classList.remove("hidden");
+          count.classList.remove("hidden");
+          caption.classList.remove("hidden");
+          textBox.classList.add("has-label");
+        } else {
+          prev.classList.add("hidden");
+          next.classList.add("hidden");
+          count.classList.add("hidden");
+          caption.classList.add("hidden");
+          textBox.classList.remove("has-label");
+          if (mode === "final") {
+            popup.classList.add("final-mode");
+            textBox.classList.add("final-message");
+          }
+        }
+      }
+
+      // Animate open/close
+      function openPopup() {
+        const overlay = el("overlay"),
+          popup = el("popup");
+        overlay.style.display = "block";
+        popup.style.display = "block";
+        requestAnimationFrame(() => {
+          overlay.classList.add("open");
+          popup.classList.add("open");
+        });
+      }
+      function hidePopup() {
+        const overlay = el("overlay"),
+          popup = el("popup");
+        overlay.classList.remove("open");
+        popup.classList.remove("open");
+        setTimeout(() => {
+          overlay.style.display = "none";
+          popup.style.display = "none";
+        }, 250);
+
+        // parar audios
+        const a1 = el("audio-only1"),
+          a2 = el("audio-only2"),
+          a3 = el("bg-music");
+        a1.pause();
+        a2.pause();
+        a3.pause();
+        a1.currentTime = 0;
+        a2.currentTime = 0;
+        a3.currentTime = 0;
+
+        // apagar corazones si estaban activos
+        stopHearts();
+      }
+      el("closeBtn").addEventListener("click", hidePopup);
+
+      /* ------- Months (slider) ------- */
+      function openMonth(idx) {
+        setMode("month");
+        curMonth = idx;
+        curPhoto = 0;
+        const m = months[curMonth];
+        if (!m || !m.photos?.length) return;
+        el("popup-title").innerText = m.title;
+        el("popup-text").innerText = m.text || "";
+        renderPhoto();
+        openPopup();
+      }
+
+      let isTransitioning = false;
+      function renderPhoto() {
+        const m = months[curMonth];
+        const p = m.photos[curPhoto];
+        const img = el("popup-img");
+
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        img.classList.add("is-out");
+
+        const pre = new Image();
+        pre.onload = () => {
+          img.src = p.src;
+          img.alt = p.cap || m.title;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              img.classList.remove("is-out");
+              el("popup-caption").innerText = p.cap || "";
+              el("popup-count").innerText = `${curPhoto + 1}/${
+                m.photos.length
+              }`;
+              setTimeout(() => {
+                isTransitioning = false;
+              }, 360);
+            });
+          });
+        };
+        pre.src = p.src;
+      }
+      function nextPhoto() {
+        if (popupMode !== "month" || isTransitioning) return;
+        const m = months[curMonth];
+        curPhoto = (curPhoto + 1) % m.photos.length;
+        renderPhoto();
+      }
+      function prevPhoto() {
+        if (popupMode !== "month" || isTransitioning) return;
+        const m = months[curMonth];
+        curPhoto = (curPhoto - 1 + m.photos.length) % m.photos.length;
+        renderPhoto();
+      }
+
+      /* ---- Swipe gestures on the image ---- */
+      (function enableSwipe() {
+        const img = el("popup-img");
+        const slider = img.closest(".slider");
+        let startX = 0,
+          deltaX = 0,
+          tracking = false;
+
+        const start = (x) => {
+          tracking = true;
+          startX = x;
+          deltaX = 0;
+        };
+        const move = (x) => {
+          if (!tracking || popupMode !== "month") return;
+          deltaX = x - startX;
+          img.style.transform = `translateX(${deltaX * 0.06}px)`;
+        };
+        const end = () => {
+          if (!tracking) return;
+          tracking = false;
+          img.style.transform = "";
+          if (Math.abs(deltaX) > 50) {
+            if (deltaX < 0) nextPhoto();
+            else prevPhoto();
+          }
+        };
+
+        slider.addEventListener("pointerdown", (e) => start(e.clientX));
+        slider.addEventListener("pointermove", (e) => move(e.clientX));
+        slider.addEventListener("pointerup", end);
+        slider.addEventListener("pointercancel", end);
+        slider.addEventListener("pointerleave", end);
+      })();
+
+      /* ------- Memories (single image) ------- */
+      function showSingle(imgSrc, message) {
+        setMode("memory");
+        el("popup-title").innerText = "";
+        el("popup-text").innerText = message || "";
+        el("popup-caption").innerText = "";
+        el("popup-count").innerText = "";
+        const img = el("popup-img");
+        img.src = imgSrc || "";
+        img.alt = "Foto";
+        openPopup();
+      }
+
+      /* Memories with audio */
+      function playVideoMemory3() {
+        showSingle(
+          "ButtonPhotos/Foto3.jpeg",
+          "En esta foto recuerdo que fue una de las primeras citas que tuvimos, que vimos Deadpool y luego McDonald. 💖"
+        );
+        el("audio-only1").play();
+      }
+      function playVideoMemory2() {
+        showSingle(
+          "ButtonPhotos/Foto2.jpeg",
+          "Nuestro día de playa y primer beso. 💕"
+        );
+        el("audio-only2").play();
+      }
+
+      /* ===== Corazones flotando ===== */
+      let heartsTimer = null;
+      function startHearts() {
+        const layer = document.getElementById("hearts");
+        if (!layer) return;
+        stopHearts();
+        heartsTimer = setInterval(() => {
+          const span = document.createElement("span");
+          span.className = "float-heart";
+          span.textContent = "❤";
+          const dur = 4500 + Math.random() * 3500; // 4.5s - 8s
+          const dx = Math.random() * 120 - 60 + "px"; // -60..+60
+          const fs = 16 + Math.random() * 20 + "px"; // 16..36
+          const hue = Math.random() < 0.5 ? "#ff6b8b" : "#ff90b5";
+          const startLeft = 10 + Math.random() * 80; // 10%-90%
+          span.style.left = startLeft + "%";
+          span.style.setProperty("--dur", dur + "ms");
+          span.style.setProperty("--dx", dx);
+          span.style.setProperty("--fs", fs);
+          span.style.setProperty("--col", hue);
+          layer.appendChild(span);
+          setTimeout(() => span.remove(), dur + 200);
+        }, 350);
+      }
+      function stopHearts() {
+        if (heartsTimer) {
+          clearInterval(heartsTimer);
+          heartsTimer = null;
+        }
+        const layer = document.getElementById("hearts");
+        if (layer) layer.innerHTML = "";
+      }
+
+      /* ------- Final Message (no image, just heart text) ------- */
+      function openFinalMessage() {
+        setMode("final");
+        el("popup-title").innerText = "Mensaje Final ❤️";
+        el("popup-caption").innerText = "";
+        el("popup-count").innerText = "";
+        const img = el("popup-img");
+        img.src = "";
+        img.alt = "";
+        el("popup-text").innerText =
+          "Mi amor, esto que hice es solo para ti, quiero que veas todo lo que hemos vivido hasta ahora. " +
+          "Yo espero que te guste y que veas el aprecio que le puse para que quedara lo mejor posible en poco tiempo. " +
+          "Pero en realidad también quiero recordarte lo mucho que te amo y admiro, amor. Y espero que esto lo haya demostrado aunque sea un poco. " +
+          "Yo te daría el mundo, amor, si me lo pides, y siempre estaré contigo en las buenas y en las malas. Estos 12 meses son solo el comienzo, amor. Prepárate porque me vas a tener que soportar de por vida. Ya te lo advertí. Te amo, mi amor, y espero que te haya gustado este detalle.\n\n" +
+          "De: Jonathan A. Mercado Rivera\nPara: Isabel M. Ávila Gotay";
+        openPopup();
+        startHearts(); // enciende corazones
+        const music = document.getElementById("bg-music");
+        if (music) {
+          music.currentTime = 0; // reinicia desde el inicio
+          music.play();
+        }
+      }
+
+      /* ------- Auto-size road to match buttons ------- */
+      function sizeRoadToGallery() {
+        const track = document.querySelector(".track");
+        const road = document.querySelector(".road");
+        const gallery = document.querySelector(".gallery");
+        if (!track || !road || !gallery) return;
+        const w = Math.ceil(gallery.scrollWidth); // incluye gaps + padding
+        track.style.width = w + "px";
+        road.style.width = w + "px";
+      }
+      window.addEventListener("load", sizeRoadToGallery);
+      window.addEventListener("resize", () => {
+        clearTimeout(window.__roadDebounce);
+        window.__roadDebounce = setTimeout(sizeRoadToGallery, 100);
+      });
+
+      /* Close/keys */
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") hidePopup();
+        if (popupMode === "month") {
+          if (e.key === "ArrowRight") nextPhoto();
+          if (e.key === "ArrowLeft") prevPhoto();
+        }
+      });
+
+      /* ------- Optional parallax for bg images ------- */
+      const mediaReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      );
+      if (!mediaReduced.matches) {
+        const bgPhotos = document.querySelectorAll(".bg-photo");
+        document.addEventListener(
+          "mousemove",
+          (e) => {
+            const cx = (e.clientX / window.innerWidth - 0.5) * 2; // -1..1
+            const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+            bgPhotos.forEach((img, i) => {
+              const depth = ((i % 5) + 1) * 2; // 2..10
+              img.style.transform = `translate(${cx * depth}px, ${
+                cy * depth
+              }px) rotate(-5deg)`;
+            });
+          },
+          { passive: true }
+        );
+      }
+    </script>
+  </body>
+</html>
